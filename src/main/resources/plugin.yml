@@ -1,0 +1,5 @@
+name: LogTransaction
+version: '${project.version}'
+main: fr.lefoutrolleur.logtransaction.LogTransaction
+api-version: '1.20'
+load: STARTUP
