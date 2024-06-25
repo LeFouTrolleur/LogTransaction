@@ -4,9 +4,7 @@ import java.util.UUID;
 
 public class Transaction {
 
-    public long getId() {
-        return id;
-    }
+
 
     private final UUID uuid;
     private final String transaction;
@@ -29,5 +27,8 @@ public class Transaction {
 
     public UUID getUuid() {
         return uuid;
+    }
+    public long getId() {
+        return id;
     }
 }

@@ -1,5 +1,7 @@
 package fr.lefoutrolleur.logtransaction.SQL;
 
+import fr.lefoutrolleur.logtransaction.LogTransaction;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -8,12 +10,11 @@ public class DatabaseQuery {
 
 
 
-    public static final DatabaseQuery INSTANCE = new DatabaseQuery();
 
     private final Sqliter sqliter;
 
-    private DatabaseQuery() {
-        sqliter = new Sqliter("LogTransaction");
+    public DatabaseQuery(LogTransaction transaction) {
+        sqliter = new Sqliter(transaction.getDataFolder().getAbsolutePath() + "/LogTransaction");
     }
 
     public void init(){
@@ -21,7 +22,7 @@ public class DatabaseQuery {
             HashMap<String,String> tableData = new HashMap<>();
             tableData.put("UUID","TEXT NOT NULL");
             tableData.put("TEXT","TEXT NOT NULL");
-            tableData.put("TIME", "INTEGER NOT NULL");
+            tableData.put("TIME", "BIGINT NOT NULL");
 
             sqliter.createTable("data",tableData);
         }
