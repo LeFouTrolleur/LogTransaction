@@ -1,35 +1,53 @@
 package fr.lefoutrolleur.logtransaction;
 
+import fr.lefoutrolleur.logtransaction.Handlers.CoinsEnginesChangeBalanceEvent;
 import fr.lefoutrolleur.logtransaction.SQL.DatabaseQuery;
+import fr.lefoutrolleur.logtransaction.commands.RetrievePlayerTransactionCommand;
 import fr.lefoutrolleur.logtransaction.commands.SaveTransactionCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.fusesource.jansi.Ansi;
+import su.nightexpress.coinsengine.api.CoinsEngineAPI;
+
+import java.util.HashMap;
 
 public final class LogTransaction extends JavaPlugin {
 
-    public DatabaseQuery database;
+    private static final HashMap<String,DatabaseQuery> databases = new HashMap<>();
 
     @Override
     public void onLoad() {
-        // Plugin load logic
         log(Ansi.ansi().fg(Ansi.Color.WHITE).a("Loading ").fg(Ansi.Color.YELLOW).a("LogTransaction"));
-        this.database = new DatabaseQuery(this);
+        // Load Main money database
+        databases.put("money", new DatabaseQuery(this,"money"));
+
+        // Load all currencies databases
+        CoinsEngineAPI.getCurrencyManager().getCurrencies().forEach(currency -> {
+            databases.put(currency.getName(), new DatabaseQuery(this,currency.getName()));
+        });
     }
     @Override
     public void onEnable() {
-        // Plugin startup logic
-        database.init();
+        // Initialize all databases
+        databases.values().forEach(DatabaseQuery::init);
+
+        // Register commands
         getCommand("savetransaction").setExecutor(new SaveTransactionCommand());
-        getCommand("retrievetransaction").setExecutor(new SaveTransactionCommand());
+        getCommand("retrievetransaction").setExecutor(new RetrievePlayerTransactionCommand());
+
+        // Register Handlers
+        PluginManager manager = getServer().getPluginManager();
+        manager.registerEvents(new CoinsEnginesChangeBalanceEvent(),this);
+
         log(Ansi.ansi().fg(Ansi.Color.YELLOW).a("LogTransaction").fg(Ansi.Color.WHITE).a(" is enabled"));
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
-        database.save();
+        // Save all databases
+        databases.values().forEach(DatabaseQuery::save);
     }
 
     public static LogTransaction getInstance(){
@@ -51,5 +69,8 @@ public final class LogTransaction extends JavaPlugin {
         } else {
             log(Ansi.ansi().fg(Ansi.Color.GREEN).a(message));
         }
+    }
+    public static DatabaseQuery getDatabase(String currency){
+        return databases.get(currency);
     }
 }

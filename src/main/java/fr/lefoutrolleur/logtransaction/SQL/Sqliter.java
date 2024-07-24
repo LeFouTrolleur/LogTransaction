@@ -21,7 +21,7 @@ public class Sqliter {
 
 
     public Sqliter(String dbName) {
-        this.dbName = dbName+".db";
+        this.dbName = dbName;
         openDb();
     }
 
@@ -29,9 +29,7 @@ public class Sqliter {
         try {
             //FileUtils.forceDelete(new File(dbName)); //apache commons io
             new File(dbName).delete(); //delete file
-            System.out.println("DB File deleted success");
         } catch (Exception e) {
-            System.out.println("ERROR DELETING FILE " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -41,7 +39,6 @@ public class Sqliter {
         try {
             Class.forName("org.sqlite.JDBC");
             con = DriverManager.getConnection("jdbc:sqlite:" + dbName);
-            System.out.println("Opened database successfully");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -79,16 +76,14 @@ public class Sqliter {
             Statement stmt = con.createStatement();
             String sql = "CREATE TABLE " + tableName +
                     "(" +
-                    "ID BIGINT PRIMARY KEY AUTOINCREMENT,"
+                    "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + query +
                     ")";
 
-            System.out.println("table created " + sql);
             stmt.executeUpdate(sql);
             stmt.close();
-        } catch (Exception e) {
-            System.out.println("Error While creating table " + e.getMessage());
-            e.printStackTrace();
+        } catch (Exception ignored) {
+
         }
 
     }
@@ -124,14 +119,11 @@ public class Sqliter {
                     columnValuesString
                     + ");";
 
-            System.out.println("Data inserted " + sql);
             stmt.executeUpdate(sql);
             stmt.close();
 
 
-        } catch (Exception e) {
-            System.out.println("Error inserting data " + e.getMessage());
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
 
 
@@ -170,15 +162,12 @@ public class Sqliter {
 
             //sql query
             String query = "UPDATE "+tableName+" SET "+coulmnwithValues+" WHERE "+conditions+";";
-            System.out.println(""+query);
             Statement stmt = con.createStatement();
             return  stmt.executeUpdate(query);
 
-        }catch (Exception e)
+        }catch (Exception ignored)
         {
 
-            System.out.println("Error while updating data "+e.getMessage());
-            e.printStackTrace();
         }
 
         return 0;
@@ -192,15 +181,11 @@ public class Sqliter {
 
             //sql query
             String query = "DELETE from "+tableName+" where ID="+tabledata.get("ID")+";";
-            System.out.println(""+query);
             Statement stmt = con.createStatement();
             return  stmt.executeUpdate(query);
 
-        }catch (Exception e)
+        }catch (Exception ignored)
         {
-
-            System.out.println("Error while deleting data "+e.getMessage());
-            e.printStackTrace();
         }
 
         return 0;
@@ -219,10 +204,8 @@ public class Sqliter {
             Statement stmt = con.createStatement();
             return  stmt.executeUpdate(query);
 
-        }catch (Exception e)
+        }catch (Exception ignored)
         {
-            System.out.println("ERROR UPDATE "+e.getMessage() );
-            e.printStackTrace();
         }
         return 0;
     }
@@ -245,7 +228,6 @@ public class Sqliter {
 
             if(checkquery.startsWith("update"))
             {
-                System.out.println("This is update query");
                 Statement stmt = con.createStatement();
                 stmt.executeUpdate(query);
                 return null;
@@ -271,10 +253,8 @@ public class Sqliter {
             stmt.close();
 
 
-        }catch (Exception e)
+        }catch (Exception ignored)
         {
-            System.out.println("ERROR WHILE RUNNING Query "+e.getMessage());
-            e.printStackTrace();
         }
         return resultList;
 

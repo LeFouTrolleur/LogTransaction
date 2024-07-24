@@ -4,8 +4,12 @@ main: fr.lefoutrolleur.logtransaction.LogTransaction
 api-version: '1.20'
 load: STARTUP
 commands:
-  logtransaction:
+  savetransaction:
     name: Log Transaction
     description: Log Transaction(Plugin Only)
+    aliases:
+      - st
   retrievetransaction:
     name : Retrieve Transaction
+    aliases:
+      - rt

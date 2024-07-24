@@ -24,10 +24,10 @@ public class TransactionMessagesBuilder {
     public void sendToPlayer(Player player){
         for(int i = 0; i < 10; i++){
             int n = i + page * 10;
-            if(n <= transactions.size()){
+            if(n < transactions.size()){
                 Transaction transaction = transactions.get(n);
                 Date date = new Date(transaction.getTimestamp());
-                player.sendMessage("§a" + DateFormat.getDateInstance().format(date) + " §f-> §a" + transaction.getTransaction() + "§f | ID -> §a" + transaction.getId());
+                player.sendMessage("§9" + DateFormat.getDateInstance().format(date) + "  " + DateFormat.getTimeInstance().format(date) + " §f-> §a" + transaction.getTransaction() + "§f | ID -> §b" + transaction.getId());
             } else {
                 break;
             }
@@ -52,4 +52,5 @@ public class TransactionMessagesBuilder {
     public void setPage(int page) {
         this.page = page;
     }
+
 }

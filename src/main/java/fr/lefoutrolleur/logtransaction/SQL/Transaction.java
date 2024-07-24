@@ -10,11 +10,13 @@ public class Transaction {
     private final String transaction;
     private final long timestamp;
     private final long id;
-    public Transaction(long id,UUID uuid,String transaction, long timestamp) {
+    private final String currency;
+    public Transaction(long id,UUID uuid,String transaction, long timestamp, String currency) {
         this.id = id;
         this.uuid = uuid;
         this.transaction = transaction;
         this.timestamp = timestamp;
+        this.currency = currency;
     }
 
     public long getTimestamp() {
@@ -30,5 +32,9 @@ public class Transaction {
     }
     public long getId() {
         return id;
+    }
+
+    public String getCurrency() {
+        return currency;
     }
 }

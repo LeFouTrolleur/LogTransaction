@@ -58,6 +58,10 @@
           <id>sonatype</id>
           <url>https://oss.sonatype.org/content/groups/public/</url>
       </repository>
+      <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+      </repository>
   </repositories>
 
   <dependencies>
@@ -75,8 +79,29 @@
       <dependency>
           <groupId>io.papermc.paper</groupId>
           <artifactId>paper-api</artifactId>
-          <version>1.20.6-R0.1-SNAPSHOT</version>
+          <version>1.20.4-R0.1-SNAPSHOT</version>
           <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.Zrips</groupId>
+          <artifactId>CMIAPI</artifactId>
+          <scope>system</scope>
+          <version>9.7.4.1</version>
+          <systemPath>${project.basedir}/src/main/resources/CMIAPI-9.7.4.1.jar</systemPath>
+      </dependency>
+      <dependency>
+          <groupId>CoinsEngines</groupId>
+          <artifactId>CoinsEngines</artifactId>
+          <scope>system</scope>
+          <version>2.3.4</version>
+          <systemPath>${project.basedir}/src/main/resources/CoinsEngine-2.3.4.jar</systemPath>
+      </dependency>
+      <dependency>
+          <groupId>NightCore</groupId>
+          <artifactId>NightCore</artifactId>
+          <scope>system</scope>
+          <version>2.6.3</version>
+          <systemPath>${project.basedir}/src/main/resources/nightcore-2.6.3.jar</systemPath>
       </dependency>
   </dependencies>
 </project>
