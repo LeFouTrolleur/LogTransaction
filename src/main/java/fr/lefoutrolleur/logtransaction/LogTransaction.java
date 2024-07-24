@@ -1,9 +1,9 @@
 package fr.lefoutrolleur.logtransaction;
 
+import fr.lefoutrolleur.logtransaction.Handlers.CMIAPIChangeBalanceEvent;
 import fr.lefoutrolleur.logtransaction.Handlers.CoinsEnginesChangeBalanceEvent;
 import fr.lefoutrolleur.logtransaction.SQL.DatabaseQuery;
 import fr.lefoutrolleur.logtransaction.commands.RetrievePlayerTransactionCommand;
-import fr.lefoutrolleur.logtransaction.commands.SaveTransactionCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -34,12 +34,12 @@ public final class LogTransaction extends JavaPlugin {
         databases.values().forEach(DatabaseQuery::init);
 
         // Register commands
-        getCommand("savetransaction").setExecutor(new SaveTransactionCommand());
         getCommand("retrievetransaction").setExecutor(new RetrievePlayerTransactionCommand());
 
         // Register Handlers
         PluginManager manager = getServer().getPluginManager();
         manager.registerEvents(new CoinsEnginesChangeBalanceEvent(),this);
+        manager.registerEvents(new CMIAPIChangeBalanceEvent(),this);
 
         log(Ansi.ansi().fg(Ansi.Color.YELLOW).a("LogTransaction").fg(Ansi.Color.WHITE).a(" is enabled"));
     }

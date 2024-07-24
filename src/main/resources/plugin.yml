@@ -2,13 +2,13 @@ name: LogTransaction
 version: '${project.version}'
 main: fr.lefoutrolleur.logtransaction.LogTransaction
 api-version: '1.20'
+database: true
+
+depend:
+  - CMI
+  - CoinsEngines
 load: STARTUP
 commands:
-  savetransaction:
-    name: Log Transaction
-    description: Log Transaction(Plugin Only)
-    aliases:
-      - st
   retrievetransaction:
     name : Retrieve Transaction
     aliases:

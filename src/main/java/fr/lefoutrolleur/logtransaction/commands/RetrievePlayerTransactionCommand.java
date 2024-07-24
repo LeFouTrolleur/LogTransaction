@@ -19,6 +19,8 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Text;
+import su.nightexpress.coinsengine.api.CoinsEngineAPI;
+import su.nightexpress.coinsengine.api.currency.Currency;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,8 +90,8 @@ public class RetrievePlayerTransactionCommand implements CommandExecutor, TabCom
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if(sender instanceof Player player){
             if(player.hasPermission(permission)){
-                if(args.length == 1){
-                    if(!args[0].isEmpty()){
+                if(args.length == 1) {
+                    if (!args[0].isEmpty()) {
                         ArrayList<String> list = new ArrayList<>();
                         list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
                         list.addAll(Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList());
@@ -97,6 +99,10 @@ public class RetrievePlayerTransactionCommand implements CommandExecutor, TabCom
                     }
                     return List.of("<player>");
                 } else if(args.length == 2){
+                    List<String> list = new ArrayList<>(CoinsEngineAPI.getCurrencyManager().getCurrencies().stream().map(Currency::getName).toList());
+                    list.add("money");
+                    return StringUtil.copyPartialMatches(args[1], list, new ArrayList<>());
+                } else if(args.length == 3){
                     if(args[1].isEmpty()){
                         return List.of("(page)");
                     }
