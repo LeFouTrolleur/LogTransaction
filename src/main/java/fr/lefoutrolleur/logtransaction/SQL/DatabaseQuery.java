@@ -53,7 +53,6 @@ public class DatabaseQuery {
         sqliter.closeDb();
     }
     public void saveData(UUID uuid, float transaction, long time, String currency, float before, float after){
-        log(ansi().a("Saving data for "+uuid+" "+transaction+" "+time));
         HashMap<String,String> data = new HashMap<>();
         data.put("UUID",uuid.toString());
         data.put("TRANS", String.valueOf(transaction));
