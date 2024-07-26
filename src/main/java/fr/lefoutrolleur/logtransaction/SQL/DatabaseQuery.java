@@ -1,11 +1,18 @@
 package fr.lefoutrolleur.logtransaction.SQL;
 
 import fr.lefoutrolleur.logtransaction.LogTransaction;
+import su.nightexpress.coinsengine.api.CoinsEngineAPI;
+import su.nightexpress.coinsengine.api.currency.Currency;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.logging.Logger;
+
+import static fr.lefoutrolleur.logtransaction.LogTransaction.log;
+import static org.fusesource.jansi.Ansi.ansi;
 
 public class DatabaseQuery {
 
@@ -13,54 +20,53 @@ public class DatabaseQuery {
 
 
     private final Sqliter sqliter;
-    final String currency;
     final String databaseName;
-
-    public DatabaseQuery(LogTransaction transaction, String currency) {
-        this.currency = currency;
-        this.databaseName = "LogTransaction_"+currency+".db";
-        if(!new File(transaction.getDataFolder(),databaseName).exists()) {
+    final Logger logger;
+    public DatabaseQuery(LogTransaction transaction) {
+        this.databaseName = "LogTransaction.db";
+        this.logger = transaction.getLogger();
+        File databaseFile = new File(transaction.getDataFolder(),databaseName);
+        if(!databaseFile.exists()) {
+            logger.info("Creating database...");
             transaction.saveResource(databaseName, false);
+        } else {
+            logger.info("Initializing database...");
         }
         sqliter = new Sqliter(transaction.getDataFolder().getAbsolutePath() + "/" + databaseName);
     }
 
     public void init(){
-        if(!sqliter.haveTable("data")){
-            HashMap<String,String> tableData = new HashMap<>();
-            tableData.put("UUID","TEXT NOT NULL");
-            tableData.put("TEXT","TEXT NOT NULL");
-            tableData.put("TIME", "BIGINT NOT NULL");
-            sqliter.createTable("data",tableData);
+        for (Currency currency : CoinsEngineAPI.getCurrencyManager().getCurrencies()) {
+            if(!sqliter.haveTable(currency.getName())){
+                logger.info("Creating "+currency.getName()+" table for database...");
+                HashMap<String,String> tableData = new HashMap<>();
+                tableData.put("UUID","TEXT NOT NULL");
+                tableData.put("TRANS","BIGINT NOT NULL");
+                tableData.put("TIME", "BIGINT NOT NULL");
+                sqliter.createTable(currency.getName(),tableData);
+            }
         }
     }
     public void save(){
         sqliter.closeDb();
     }
-    public void saveData(UUID uuid, String transaction, long time){
+    public void saveData(UUID uuid, float transaction, long time, String currency){
+        log(ansi().a("Saving data for "+uuid+" "+transaction+" "+time));
         HashMap<String,String> data = new HashMap<>();
         data.put("UUID",uuid.toString());
-        data.put("TEXT",transaction);
+        data.put("TRANS", String.valueOf(transaction));
         data.put("TIME",String.valueOf(time));
-        sqliter.insertData("data",data);
+        sqliter.insertData(currency,data);
     }
     public void saveData(Transaction transaction){
-        saveData(transaction.getUuid(),transaction.getTransaction(),transaction.getTimestamp());
+        saveData(transaction.getUuid(),transaction.getTransaction(),transaction.getTimestamp(), transaction.getCurrency());
     }
-    public ArrayList<Transaction> retrieveData(UUID uuid){
-        ArrayList<HashMap<String,String>> data = sqliter.runQuery("SELECT * from data where UUID='"+uuid.toString()+"';");
+    public ArrayList<Transaction> retrieveData(UUID uuid, String currency){
+        ArrayList<HashMap<String,String>> data = sqliter.runQuery("SELECT * from " + currency + " where UUID='"+uuid.toString()+"';");
         ArrayList<Transaction> result = new ArrayList<>();
         for (HashMap<String,String> hashmap : data) {
-            result.add(new Transaction(Long.parseLong(hashmap.get("ID")),UUID.fromString(hashmap.get("UUID")),hashmap.get("TEXT"),Long.parseLong(hashmap.get("TIME")),currency));
+            result.add(new Transaction(UUID.fromString(hashmap.get("UUID")),Float.parseFloat(hashmap.get("TRANS")),Long.parseLong(hashmap.get("TIME")),currency));
         }
         return result;
-    }
-    public void removeData(Transaction transaction){
-        HashMap<String,String> data = new HashMap<>();
-        data.put("ID",String.valueOf(transaction.getId()));
-        data.put("UUID",transaction.getUuid().toString());
-        data.put("TEXT",transaction.getTransaction());
-        data.put("TIME",String.valueOf(transaction.getTimestamp()));
-        sqliter.deleteData("data",data);
     }
 }

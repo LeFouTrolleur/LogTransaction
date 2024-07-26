@@ -6,10 +6,11 @@ database: true
 
 depend:
   - CMI
-  - CoinsEngines
+  - nightcore
+  - CoinsEngine
 load: STARTUP
 commands:
   retrievetransaction:
-    name : Retrieve Transaction
+    name : Retrieve Transactions of a player in a currency
     aliases:
       - rt

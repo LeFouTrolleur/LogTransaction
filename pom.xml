@@ -12,7 +12,7 @@
   <name>LogTransaction</name>
 
   <properties>
-    <java.version>1.8</java.version>
+    <java.version>21</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -44,7 +44,7 @@
     <resources>
       <resource>
         <directory>src/main/resources</directory>
-        <filtering>true</filtering>
+        <filtering>false</filtering>
       </resource>
     </resources>
   </build>
@@ -70,11 +70,13 @@
           <groupId>org.xerial</groupId>
           <artifactId>sqlite-jdbc</artifactId>
           <version>3.41.2.2</version>
+          <scope>provided</scope>
       </dependency>
       <dependency>
           <groupId>org.fusesource.jansi</groupId>
           <artifactId>jansi</artifactId>
           <version>2.4.1</version>
+          <scope>provided</scope>
       </dependency>
       <dependency>
           <groupId>io.papermc.paper</groupId>

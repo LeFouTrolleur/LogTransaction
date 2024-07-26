@@ -83,7 +83,6 @@ public class Sqliter {
             stmt.executeUpdate(sql);
             stmt.close();
         } catch (Exception ignored) {
-
         }
 
     }
@@ -123,7 +122,8 @@ public class Sqliter {
             stmt.close();
 
 
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
 

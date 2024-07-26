@@ -11,6 +11,7 @@ import java.util.Date;
 
 import static fr.lefoutrolleur.logtransaction.LogTransaction.log;
 
+@Deprecated(forRemoval = true)
 public class TransactionMessagesBuilder {
 
 
@@ -27,7 +28,7 @@ public class TransactionMessagesBuilder {
             if(n < transactions.size()){
                 Transaction transaction = transactions.get(n);
                 Date date = new Date(transaction.getTimestamp());
-                player.sendMessage("§9" + DateFormat.getDateInstance().format(date) + "  " + DateFormat.getTimeInstance().format(date) + " §f-> §a" + transaction.getTransaction() + "§f | ID -> §b" + transaction.getId());
+                player.sendMessage("§9" + DateFormat.getDateInstance().format(date) + "  " + DateFormat.getTimeInstance().format(date) + " §f-> §a" + transaction.getTransaction() + "§f | ID -> §b");
             } else {
                 break;
             }
@@ -39,7 +40,7 @@ public class TransactionMessagesBuilder {
             if(n <= transactions.size()){
                 Transaction transaction = transactions.get(n);
                 Date date = new Date(transaction.getTimestamp());
-                log(Ansi.ansi().fg(Ansi.Color.GREEN).a(DateFormat.getDateInstance().format(date) + " -> " + transaction.getTransaction() + " | ID -> " + transaction.getId()));
+                log(Ansi.ansi().fg(Ansi.Color.GREEN).a(DateFormat.getDateInstance().format(date) + " -> " + transaction.getTransaction() + " | ID -> "));
             } else {
                 break;
             }

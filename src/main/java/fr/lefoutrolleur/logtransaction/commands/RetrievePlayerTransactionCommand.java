@@ -1,13 +1,9 @@
 package fr.lefoutrolleur.logtransaction.commands;
 
-import fr.lefoutrolleur.logtransaction.Builder.TransactionMessagesBuilder;
+import fr.lefoutrolleur.logtransaction.Holders.LogInventoryHolder;
 import fr.lefoutrolleur.logtransaction.LogTransaction;
 import fr.lefoutrolleur.logtransaction.SQL.DatabaseQuery;
 import fr.lefoutrolleur.logtransaction.SQL.Transaction;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -18,38 +14,54 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Text;
 import su.nightexpress.coinsengine.api.CoinsEngineAPI;
 import su.nightexpress.coinsengine.api.currency.Currency;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import static fr.lefoutrolleur.logtransaction.LogTransaction.sendError;
-import static fr.lefoutrolleur.logtransaction.LogTransaction.sendMessage;
 
 public class RetrievePlayerTransactionCommand implements CommandExecutor, TabCompleter {
 
     final String permission = "logtransaction.command.admin.retrieveplayer";
+    final DatabaseQuery database;
+    public RetrievePlayerTransactionCommand(DatabaseQuery database){
+        this.database = database;
+    }
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        if(sender instanceof Player player){
-            if(!player.hasPermission(permission)) {
+        if(!(sender instanceof Player player)){
+            sendError(sender,"Seul un joueur peut exécuter cette commande");
+            return false;
+        }
+        if(!player.hasPermission(permission)) return false;
+        if(args.length >= 2){
+            String playerName = args[0];
+            String currency = args[1];
+            OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
+            UUID uuid = target.getUniqueId();
+            if(CoinsEngineAPI.getCurrencyManager().getCurrencies().stream().map(Currency::getName).noneMatch(currency::equals)){
+                sendError(sender,"Cette devise n'existe pas");
                 return false;
             }
+            ArrayList<Transaction> transactions = database.retrieveData(uuid,currency);
+            LogInventoryHolder logInventoryHandler = new LogInventoryHolder(LogTransaction.getInstance(),currency,transactions,target);
+            player.openInventory(logInventoryHandler.getInventory());
+            logInventoryHandler.loadInventory();
+            return true;
         }
-        if(args.length >= 2){
+        /*if(args.length >= 2){
             int page = 0;
             if(args.length == 3){
                 page = Integer.parseInt(args[2])-1;
             }
             String playerName = args[0];
             String currency = args[1];
-            OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
-            UUID uuid = target.getUniqueId();
-            DatabaseQuery database = LogTransaction.getDatabase(currency);
+
             ArrayList<Transaction> transactions = database.retrieveData(uuid);
             if(transactions.isEmpty()){
                 sendError(sender, "Aucune transaction n'a été trouvé pour ce joueur");
@@ -82,7 +94,7 @@ public class RetrievePlayerTransactionCommand implements CommandExecutor, TabCom
                     builder.sendToSender(sender);
                 }
             }
-        }
+        }*/
         return false;
     }
 
@@ -100,12 +112,7 @@ public class RetrievePlayerTransactionCommand implements CommandExecutor, TabCom
                     return List.of("<player>");
                 } else if(args.length == 2){
                     List<String> list = new ArrayList<>(CoinsEngineAPI.getCurrencyManager().getCurrencies().stream().map(Currency::getName).toList());
-                    list.add("money");
                     return StringUtil.copyPartialMatches(args[1], list, new ArrayList<>());
-                } else if(args.length == 3){
-                    if(args[1].isEmpty()){
-                        return List.of("(page)");
-                    }
                 }
             }
         }
