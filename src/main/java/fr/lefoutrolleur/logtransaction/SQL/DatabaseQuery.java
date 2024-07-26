@@ -43,6 +43,8 @@ public class DatabaseQuery {
                 tableData.put("UUID","TEXT NOT NULL");
                 tableData.put("TRANS","BIGINT NOT NULL");
                 tableData.put("TIME", "BIGINT NOT NULL");
+                tableData.put("BEFORE","BIGINT");
+                tableData.put("AFTER","BIGINT");
                 sqliter.createTable(currency.getName(),tableData);
             }
         }
@@ -50,22 +52,24 @@ public class DatabaseQuery {
     public void save(){
         sqliter.closeDb();
     }
-    public void saveData(UUID uuid, float transaction, long time, String currency){
+    public void saveData(UUID uuid, float transaction, long time, String currency, float before, float after){
         log(ansi().a("Saving data for "+uuid+" "+transaction+" "+time));
         HashMap<String,String> data = new HashMap<>();
         data.put("UUID",uuid.toString());
         data.put("TRANS", String.valueOf(transaction));
         data.put("TIME",String.valueOf(time));
+        data.put("BEFORE", String.valueOf(before));
+        data.put("AFTER", String.valueOf(after));
         sqliter.insertData(currency,data);
     }
     public void saveData(Transaction transaction){
-        saveData(transaction.getUuid(),transaction.getTransaction(),transaction.getTimestamp(), transaction.getCurrency());
+        saveData(transaction.getUuid(),transaction.getTransaction(),transaction.getTimestamp(), transaction.getCurrency(),transaction.getBeforeBalance(),transaction.getAfterBalance());
     }
     public ArrayList<Transaction> retrieveData(UUID uuid, String currency){
         ArrayList<HashMap<String,String>> data = sqliter.runQuery("SELECT * from " + currency + " where UUID='"+uuid.toString()+"';");
         ArrayList<Transaction> result = new ArrayList<>();
         for (HashMap<String,String> hashmap : data) {
-            result.add(new Transaction(UUID.fromString(hashmap.get("UUID")),Float.parseFloat(hashmap.get("TRANS")),Long.parseLong(hashmap.get("TIME")),currency));
+            result.add(new Transaction(UUID.fromString(hashmap.get("UUID")),Float.parseFloat(hashmap.get("TRANS")),Long.parseLong(hashmap.get("TIME")),currency,Float.parseFloat(hashmap.get("BEFORE")),Float.parseFloat(hashmap.get("AFTER"))));
         }
         return result;
     }

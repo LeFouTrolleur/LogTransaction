@@ -10,11 +10,15 @@ public class Transaction {
     private final float transaction;
     private final long timestamp;
     private final String currency;
-    public Transaction(UUID uuid,float transaction, long timestamp, String currency) {
+    private final float before;
+    private final float after;
+    public Transaction(UUID uuid,float transaction, long timestamp, String currency, float before, float after) {
         this.uuid = uuid;
         this.transaction = transaction;
         this.timestamp = timestamp;
         this.currency = currency;
+        this.before = before;
+        this.after = after;
     }
 
     public long getTimestamp() {
@@ -31,5 +35,12 @@ public class Transaction {
 
     public String getCurrency() {
         return currency;
+    }
+
+    public float getBeforeBalance() {
+        return before;
+    }
+    public float getAfterBalance() {
+        return after;
     }
 }
