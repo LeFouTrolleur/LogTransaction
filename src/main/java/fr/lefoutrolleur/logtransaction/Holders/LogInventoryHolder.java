@@ -10,16 +10,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.fusesource.jansi.Ansi;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static fr.lefoutrolleur.logtransaction.LogTransaction.log;
-import static fr.lefoutrolleur.logtransaction.utils.ItemsLib.getPageNumberItemStack;
-import static fr.lefoutrolleur.logtransaction.utils.ItemsLib.getSortItemStack;
+import static fr.lefoutrolleur.logtransaction.utils.ItemsLib.*;
 
 public class LogInventoryHolder implements InventoryHolder {
 
@@ -48,11 +44,12 @@ public class LogInventoryHolder implements InventoryHolder {
         this.inv = plugin.getServer().createInventory(this,9*6,String.format("Logs - %s - %s",player.getName(),currency));
     }
     public void loadInventory(){
-        ItemStack item = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name(" ").toItemStack();
+
         for(int i = 0;i<9;++i) {
-            inv.setItem(i,item);
+            inv.setItem(i,BLACK_GLASS);
         }
         inv.setItem(4, ItemsLib.getPlayerHeadItemStack(player, all_transactions.size()));
+        inv.setItem(2, new ItemBuilder(Material.PAPER).name("§aSauvegarder").lore("§7Cliquez pour sauvegarder").toItemStack());
         refresh();
     }
     @Override
@@ -137,15 +134,30 @@ public class LogInventoryHolder implements InventoryHolder {
         this.sortType = sortType;
         refresh();
     }
-    List<Transaction> getSortedTransactionsByDate(List<Transaction> transactions){
+    public List<Transaction> getSortedTransactionsByDate(List<Transaction> transactions){
         return transactions.stream()
                 .sorted(Comparator.comparingLong(Transaction::getTimestamp))
                 .collect(Collectors.toList());
     }
-    List<Transaction> getSortedTransactionsByAmount(List<Transaction> transactions){
+    public List<Transaction> getSortedTransactionsByAmount(List<Transaction> transactions){
         return transactions.stream()
                 .sorted(((o1, o2) -> Float.compare(Math.abs(o1.getTransaction()),Math.abs(o2.getTransaction()))))
                 .collect(Collectors.toList());
     }
 
+    public OfflinePlayer getPlayer() {
+        return player;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public List<Transaction> getAll_transactions() {
+        return all_transactions;
+    }
 }

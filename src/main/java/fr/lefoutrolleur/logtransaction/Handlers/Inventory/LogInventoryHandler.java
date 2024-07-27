@@ -1,7 +1,11 @@
 package fr.lefoutrolleur.logtransaction.Handlers.Inventory;
 
 import fr.lefoutrolleur.logtransaction.Holders.LogInventoryHolder;
+import fr.lefoutrolleur.logtransaction.Holders.SaveInventoryHolder;
+import fr.lefoutrolleur.logtransaction.LogTransaction;
 import fr.lefoutrolleur.logtransaction.utils.ItemsLib;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -24,6 +28,9 @@ public class LogInventoryHandler implements Listener {
             holder.nextPage();
         } else if(item.getItemMeta().getDisplayName().equals(ItemsLib.PREVIOUS_PAGE.getItemMeta().getDisplayName())){
             holder.previousPage();
+        } else if(item.getType() == Material.PAPER){
+            SaveInventoryHolder saveHolder = new SaveInventoryHolder(LogTransaction.getInstance(),holder.getCurrency(),holder.getPlayer(),holder.getSortedTransactionsByDate(holder.getAll_transactions()), (Player) event.getWhoClicked());
+            event.getWhoClicked().openInventory(saveHolder.getInventory());
         }
         int sortType = holder.getSortType();
         if(item.getItemMeta().getDisplayName().endsWith(SORT_ITEM_NAME)){

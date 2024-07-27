@@ -1,6 +1,5 @@
 package fr.lefoutrolleur.logtransaction.utils;
 
-import fr.lefoutrolleur.logtransaction.Holders.LogInventoryHolder;
 import fr.lefoutrolleur.logtransaction.SQL.Transaction;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -19,8 +18,7 @@ public class ItemsLib {
     public static ItemStack NEXT_PAGE = new ItemBuilder(Material.PLAYER_HEAD).name(colorize(DARK_SLATE_BLUE + "Page suivante")).lore("§7Cliquez pour voir à la prochaine page").setTextureHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjE1MzRjOWJlYTRhMTA3NDUxMjhmMGQ3ZDViZDhmYjE4NDhhYzgyYzc5MzMyM2JlNWMwNjEyYTkxZGQ1OGJiZCJ9fX0=").toItemStack();
     public static ItemStack PREVIOUS_PAGE = new ItemBuilder(Material.PLAYER_HEAD).name(colorize(CORNFLOWER_BLUE + "Page précédente")).lore("§7Cliquez pour voir la page précédente").setTextureHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDQ4OTIwNGQxYzk3YzY5MGYyNzBhOGQ2Y2YwNDEyMjgyODhjNDU3OTJjNjZjMTY1NDc4MWM4MzRkMjg3M2JhNSJ9fX0=").toItemStack();
     public static ItemStack EMPTY_TRANSACTION = new ItemBuilder(Material.PLAYER_HEAD).name("§cAucune Transaction trouvée").lore("§7Ce joueur n'a effectué aucune transaction!").setTextureHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTljZGI5YWYzOGNmNDFkYWE1M2JjOGNkYTc2NjVjNTA5NjMyZDE0ZTY3OGYwZjE5ZjI2M2Y0NmU1NDFkOGEzMCJ9fX0=").toItemStack();
-
-
+    public static ItemStack BLACK_GLASS = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name(" ").toItemStack();
     @Nullable
     public static ItemStack fromTransaction(Transaction transaction, int index, int max) {
         float amount = transaction.getTransaction();
@@ -38,6 +36,16 @@ public class ItemsLib {
         builder.lore(colorize(DARK_SALMON + DateFormat.getDateInstance().format(date) + "  " + DateFormat.getTimeInstance().format(date)),colorize(LIGHT_SEA_GREEN + "Avant: " + String.format("%.2f",transaction.getBeforeBalance())), colorize(LIGHT_SKY_BLUE + "Après: " + String.format("%.2f",transaction.getAfterBalance())), currency_lore, "§8" + index + "/" + max);
         return builder.toItemStack();
     }
+    public static ItemStack getDateItemStack(long older, long newer, int number) {
+        Date older_date = new Date(older);
+        Date newer_date = new Date(newer);
+        ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD);
+        builder.setTextureHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWQ5YjcxMmNkZjkxNDc3NTllYmE0ZDU1NzNjZGI2MzgzM2I0NGYzYWNlNGZjYjY2ZWEzYWIxNDcyMDdkYTNmZiJ9fX0=");
+        builder.name(colorize(DARK_CYAN + "Dates"));
+        builder.lore(colorize(DARK_SALMON + DateFormat.getDateInstance().format(older_date) + " " + DateFormat.getTimeInstance().format(older_date)), colorize(LIGHT_SEA_GREEN + DateFormat.getDateInstance().format(newer_date) + " " + DateFormat.getTimeInstance().format(newer_date)), "§7Nombre: " + number);
+        return builder.toItemStack();
+    }
+
     public static ItemStack getSortItemStack(int sortType) {
         ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD);
         //
@@ -69,6 +77,12 @@ public class ItemsLib {
         }
         builder.lore(lore);
         return builder.toItemStack();
+    }
+    public static ItemStack getModifyDate(String text) {
+        return new ItemBuilder(Material.PAPER).name("§7Modifier la date du" + text).lore("§7Cliquez pour modifier la date").toItemStack();
+    }
+    public static ItemStack getModifyHours(String text) {
+        return new ItemBuilder(Material.PAPER).name("§7Modifier les heures du" + text).lore("§7Cliquez pour modifier les heures").toItemStack();
     }
     public static ItemStack getPageNumberItemStack(int pageNumber) {
         ItemBuilder builder = new ItemBuilder(Material.PAPER);
