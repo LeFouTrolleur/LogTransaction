@@ -91,10 +91,7 @@ public final class ItemBuilder {
     }
 
     public ItemBuilder lore(String... lore) {
-        ItemMeta meta = item.getItemMeta();
-        meta.setLore(Arrays.asList(lore));
-        item.setItemMeta(meta);
-        return this;
+        return lore(Arrays.asList(lore));
     }
     public ItemBuilder lore(List<String> lore) {
         ItemMeta meta = item.getItemMeta();

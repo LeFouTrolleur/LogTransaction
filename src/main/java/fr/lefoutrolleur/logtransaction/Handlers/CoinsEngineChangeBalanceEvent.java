@@ -20,7 +20,7 @@ public class CoinsEngineChangeBalanceEvent implements Listener {
         float transaction_amount = (float) (event.getNewAmount() - event.getOldAmount());
         if(transaction_amount == 0f) return;
         DatabaseQuery database = LogTransaction.getDatabase();
-        Transaction transaction = new Transaction(player.getUniqueId(), transaction_amount, System.currentTimeMillis(),currency.getName(), (float) event.getOldAmount(), (float) event.getNewAmount());
+        Transaction transaction = new Transaction(player.getUniqueId(), transaction_amount, System.currentTimeMillis(),currency.getName(), (float) event.getOldAmount(), (float) event.getNewAmount(),null);
         database.saveData(transaction);
     }
 }

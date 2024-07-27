@@ -23,15 +23,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static fr.lefoutrolleur.logtransaction.LogTransaction.log;
 import static fr.lefoutrolleur.logtransaction.LogTransaction.sendError;
 
 public class RetrievePlayerTransactionCommand implements CommandExecutor, TabCompleter {
 
     final String permission = "logtransaction.command.admin.retrieveplayer";
-    final DatabaseQuery database;
-    public RetrievePlayerTransactionCommand(DatabaseQuery database){
-        this.database = database;
-    }
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
         if(!(sender instanceof Player player)){
@@ -44,10 +41,11 @@ public class RetrievePlayerTransactionCommand implements CommandExecutor, TabCom
             String currency = args[1];
             OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
             UUID uuid = target.getUniqueId();
-            if(CoinsEngineAPI.getCurrencyManager().getCurrencies().stream().map(Currency::getName).noneMatch(currency::equals)){
+            if(CoinsEngineAPI.getCurrencyManager().getCurrencies().stream().map(Currency::getName).noneMatch(currency::equals) && !currency.equals(DatabaseQuery.MONEY)){
                 sendError(sender,"Cette devise n'existe pas");
                 return false;
             }
+            DatabaseQuery database = LogTransaction.getDatabase();
             ArrayList<Transaction> transactions = database.retrieveData(uuid,currency);
             LogInventoryHolder logInventoryHolder = new LogInventoryHolder(LogTransaction.getInstance(),currency,transactions,target);
             player.openInventory(logInventoryHolder.getInventory());
@@ -71,6 +69,7 @@ public class RetrievePlayerTransactionCommand implements CommandExecutor, TabCom
                     return List.of("<player>");
                 } else if(args.length == 2){
                     List<String> list = new ArrayList<>(CoinsEngineAPI.getCurrencyManager().getCurrencies().stream().map(Currency::getName).toList());
+                    list.add(DatabaseQuery.MONEY);
                     return StringUtil.copyPartialMatches(args[1], list, new ArrayList<>());
                 }
             }

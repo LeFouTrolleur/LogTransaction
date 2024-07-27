@@ -33,7 +33,16 @@ public class ItemsLib {
         }
         String currency_lore = "§2" + transaction.getCurrency();
 
-        builder.lore(colorize(DARK_SALMON + DateFormat.getDateInstance().format(date) + "  " + DateFormat.getTimeInstance().format(date)),colorize(LIGHT_SEA_GREEN + "Avant: " + String.format("%.2f",transaction.getBeforeBalance())), colorize(LIGHT_SKY_BLUE + "Après: " + String.format("%.2f",transaction.getAfterBalance())), currency_lore, "§8" + index + "/" + max);
+        List<String> lore = new ArrayList<>();
+        lore.add(colorize(DARK_SALMON + DateFormat.getDateInstance().format(date) + "  " + DateFormat.getTimeInstance().format(date)));
+        lore.add(colorize(LIGHT_SEA_GREEN + "Avant: " + String.format("%.2f",transaction.getBeforeBalance())));
+        lore.add(colorize(LIGHT_SKY_BLUE + "Après: " + String.format("%.2f",transaction.getAfterBalance())));
+        if(!transaction.getSource().equals("null")) {
+            lore.add("§dSource: §5" + transaction.getSource());
+        }
+        lore.add(currency_lore);
+        lore.add("§8" + index + "/" + max);
+        builder.lore(lore);
         return builder.toItemStack();
     }
     public static ItemStack getDateItemStack(long older, long newer, int number) {
@@ -64,16 +73,16 @@ public class ItemsLib {
             lore.add(colorize(GRAY + ">> Trier par date (décroissant)"));
         }
         if(sortType == 2){
-            lore.add(colorize(GOLD+ ">> Trier par nombre (croissant)"));
+            lore.add(colorize(GOLD+ ">> Trier par montant (croissant)"));
             builder.setTextureHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWRhMDI3NDc3MTk3YzZmZDdhZDMzMDE0NTQ2ZGUzOTJiNGE1MWM2MzRlYTY4YzhiN2JjYzAxMzFjODNlM2YifX19");
         } else {
-            lore.add(colorize(GRAY + ">> Trier par nombre (croissant)"));
+            lore.add(colorize(GRAY + ">> Trier par montant (croissant)"));
         }
         if(sortType == 3){
-            lore.add(colorize(GOLD+ ">> Trier par nombre (décroissant)"));
+            lore.add(colorize(GOLD+ ">> Trier par montant (décroissant)"));
             builder.setTextureHead("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmY3NDE2Y2U5ZTgyNmU0ODk5YjI4NGJiMGFiOTQ4NDNhOGY3NTg2ZTUyYjcxZmMzMTI1ZTAyODZmOTI2YSJ9fX0=");
         } else {
-            lore.add(colorize(GRAY + ">> Trier par nombre (décroissant)"));
+            lore.add(colorize(GRAY + ">> Trier par montant (décroissant)"));
         }
         builder.lore(lore);
         return builder.toItemStack();

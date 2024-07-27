@@ -1,16 +1,13 @@
 name: LogTransaction
-version: '1.0-SNAPSHOT'
+version: '1.0-RELEASE'
 main: fr.lefoutrolleur.logtransaction.LogTransaction
 api-version: '1.20'
 database: true
 
 depend:
-  - CMI
   - nightcore
   - CoinsEngine
+  - CMI
 load: STARTUP
 commands:
   retrievetransaction:
-    name : Retrieve Transactions of a player in a currency
-    aliases:
-      - rt

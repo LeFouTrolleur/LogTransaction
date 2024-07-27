@@ -44,12 +44,13 @@ public class LogInventoryHolder implements InventoryHolder {
         this.inv = plugin.getServer().createInventory(this,9*6,String.format("Logs - %s - %s",player.getName(),currency));
     }
     public void loadInventory(){
-
         for(int i = 0;i<9;++i) {
             inv.setItem(i,BLACK_GLASS);
         }
         inv.setItem(4, ItemsLib.getPlayerHeadItemStack(player, all_transactions.size()));
-        inv.setItem(2, new ItemBuilder(Material.PAPER).name("§aSauvegarder").lore("§7Cliquez pour sauvegarder").toItemStack());
+        if(!all_transactions.isEmpty()){
+            inv.setItem(2, new ItemBuilder(Material.MAP).name("§aSauvegarder").lore("§7Cliquez pour sauvegarder").toItemStack());
+        }
         refresh();
     }
     @Override

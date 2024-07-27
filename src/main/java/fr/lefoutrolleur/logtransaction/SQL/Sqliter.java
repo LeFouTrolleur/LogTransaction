@@ -10,6 +10,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static fr.lefoutrolleur.logtransaction.LogTransaction.log;
+
 /**
  * only support for the string as of now
  * @author sapan.dang
@@ -211,7 +213,7 @@ public class Sqliter {
     }
     public boolean haveTable(String tableName){
         try {
-            ArrayList<HashMap<String,String>> q = runQuery("SELECT * FROM " + tableName);
+            ArrayList<HashMap<String,String>> q = runQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='"+tableName+"';");
             return !q.isEmpty();
         } catch (Exception e) {
             return false;

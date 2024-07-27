@@ -70,7 +70,7 @@ public class SaveInventoryHolder implements InventoryHolder {
         try {
             long now = System.currentTimeMillis();
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            writer.write(String.format("Date de la sauvegarde: %s",DateFormat.getDateInstance().format(new Date())) + " | Heure de la sauvegarde: " + DateFormat.getTimeInstance().format(new Date()) + "| Demande de " +  sender.getName()+ " | Joueur: " + player.getName() + "\n");
+            writer.write(String.format("Date de la sauvegarde: %s",DateFormat.getDateInstance().format(new Date())) + " | Heure de la sauvegarde: " + DateFormat.getTimeInstance().format(new Date()) + "| Devise: " + currency +" | Demande de " +  sender.getName()+ " | Joueur: " + player.getName() + "\n");
             for(Transaction t : transactions){
                 Date transaction_date = new Date(t.getTimestamp());
                 writer.write(String.format("[%s] %s | Avant: %s | Après: %s | Montant: %s", DateFormat.getDateInstance().format(transaction_date),DateFormat.getTimeInstance().format(transaction_date),t.getBeforeBalance(),t.getAfterBalance(),t.getTransaction()) + "\n");

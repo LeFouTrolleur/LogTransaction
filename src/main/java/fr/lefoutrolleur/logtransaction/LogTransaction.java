@@ -1,5 +1,6 @@
 package fr.lefoutrolleur.logtransaction;
 
+import fr.lefoutrolleur.logtransaction.Handlers.CMIChangeBalanceEvent;
 import fr.lefoutrolleur.logtransaction.Handlers.CoinsEngineChangeBalanceEvent;
 import fr.lefoutrolleur.logtransaction.Handlers.Inventory.LogInventoryHandler;
 import fr.lefoutrolleur.logtransaction.Handlers.Inventory.SaveInventoryHandler;
@@ -18,7 +19,6 @@ public final class LogTransaction extends JavaPlugin {
     public void onLoad() {
         log(Ansi.ansi().fg(Ansi.Color.WHITE).a("Loading ").fg(Ansi.Color.YELLOW).a("LogTransaction"));
 
-
         database = new DatabaseQuery(this);
     }
     @Override
@@ -28,14 +28,14 @@ public final class LogTransaction extends JavaPlugin {
         database.init();
 
         // Register commands
-        RetrievePlayerTransactionCommand retrievePlayerTransactionCommand = new RetrievePlayerTransactionCommand(database);
-        getCommand("retrievetransaction").setExecutor(retrievePlayerTransactionCommand);
-        getCommand("retrievetransaction").setTabCompleter(retrievePlayerTransactionCommand);
+        getCommand("retrievetransaction").setExecutor(new RetrievePlayerTransactionCommand());
+        getCommand("retrievetransaction").setTabCompleter(new RetrievePlayerTransactionCommand());
         // Register Handlers
         PluginManager manager = getServer().getPluginManager();
         manager.registerEvents(new CoinsEngineChangeBalanceEvent(),this);
         manager.registerEvents(new LogInventoryHandler(),this);
         manager.registerEvents(new SaveInventoryHandler(),this);
+        manager.registerEvents(new CMIChangeBalanceEvent(),this);
 
         log(Ansi.ansi().fg(Ansi.Color.YELLOW).a("LogTransaction").fg(Ansi.Color.WHITE).a(" is enabled"));
     }

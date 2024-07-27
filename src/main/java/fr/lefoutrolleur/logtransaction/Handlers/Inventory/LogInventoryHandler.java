@@ -28,7 +28,7 @@ public class LogInventoryHandler implements Listener {
             holder.nextPage();
         } else if(item.getItemMeta().getDisplayName().equals(ItemsLib.PREVIOUS_PAGE.getItemMeta().getDisplayName())){
             holder.previousPage();
-        } else if(item.getType() == Material.PAPER){
+        } else if(item.getType() == Material.MAP){
             SaveInventoryHolder saveHolder = new SaveInventoryHolder(LogTransaction.getInstance(),holder.getCurrency(),holder.getPlayer(),holder.getSortedTransactionsByDate(holder.getAll_transactions()), (Player) event.getWhoClicked());
             event.getWhoClicked().openInventory(saveHolder.getInventory());
         }
