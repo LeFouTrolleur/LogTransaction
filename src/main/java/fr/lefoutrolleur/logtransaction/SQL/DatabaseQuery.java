@@ -23,6 +23,12 @@ public class DatabaseQuery {
     final String databaseName;
     final Logger logger;
     public static final String MONEY = "money";
+    private final String UUID_TABLE_NAME = "UUID";
+    private final String TRANSACTION_NAME = "TRANS";
+    private final String TIME_TABLE_NAME = "TIME";
+    private final String BEFORE_TABLE_NAME = "BEFORE";
+    private final String AFTER_TABLE_NAME = "AFTER";
+    private final String SOURCE_TABLE_NAME = "SOURCE";
     public DatabaseQuery(LogTransaction transaction) {
         this.databaseName = "LogTransaction.db";
         this.logger = transaction.getLogger();
@@ -46,12 +52,12 @@ public class DatabaseQuery {
         if(!sqliter.haveTable(table)){
             logger.info("Creating "+table+" table for database...");
             HashMap<String,String> tableData = new HashMap<>();
-            tableData.put("UUID","TEXT NOT NULL");
-            tableData.put("TRANS","BIGINT NOT NULL");
-            tableData.put("TIME", "BIGINT NOT NULL");
-            tableData.put("BEFORE","BIGINT NOT NULL");
-            tableData.put("AFTER","BIGINT NOT NULL");
-            tableData.put("SOURCE","TEXT");
+            tableData.put(UUID_TABLE_NAME,"TEXT NOT NULL");
+            tableData.put(TRANSACTION_NAME,"BIGINT NOT NULL");
+            tableData.put(TIME_TABLE_NAME, "BIGINT NOT NULL");
+            tableData.put(BEFORE_TABLE_NAME,"BIGINT NOT NULL");
+            tableData.put(AFTER_TABLE_NAME,"BIGINT NOT NULL");
+            tableData.put(SOURCE_TABLE_NAME,"TEXT");
             sqliter.createTable(table,tableData);
         }
         deleteExcessiveData(table, 2, TimeUnit.DAYS);
@@ -64,12 +70,12 @@ public class DatabaseQuery {
             loadTable(currency);
         }
         HashMap<String,String> data = new HashMap<>();
-        data.put("UUID",uuid.toString());
-        data.put("TRANS", String.valueOf(transaction));
-        data.put("TIME",String.valueOf(time));
-        data.put("BEFORE", String.valueOf(before));
-        data.put("AFTER", String.valueOf(after));
-        data.put("SOURCE", source);
+        data.put(UUID_TABLE_NAME,uuid.toString());
+        data.put(TRANSACTION_NAME, String.valueOf(transaction));
+        data.put(TIME_TABLE_NAME,String.valueOf(time));
+        data.put(BEFORE_TABLE_NAME, String.valueOf(before));
+        data.put(AFTER_TABLE_NAME, String.valueOf(after));
+        data.put(SOURCE_TABLE_NAME, source);
         sqliter.insertData(currency,data);
     }
     public void saveData(Transaction transaction){
@@ -82,13 +88,13 @@ public class DatabaseQuery {
         ArrayList<HashMap<String,String>> data = sqliter.runQuery("SELECT * from " + currency + " where UUID='"+uuid.toString()+"';");
         ArrayList<Transaction> result = new ArrayList<>();
         for (HashMap<String,String> hashmap : data) {
-            result.add(new Transaction(UUID.fromString(hashmap.get("UUID")),Float.parseFloat(hashmap.get("TRANS")),Long.parseLong(hashmap.get("TIME")),currency,Float.parseFloat(hashmap.get("BEFORE")),Float.parseFloat(hashmap.get("AFTER")),hashmap.get("SOURCE")));
+            result.add(new Transaction(UUID.fromString(hashmap.get(UUID_TABLE_NAME)),Float.parseFloat(hashmap.get(TRANSACTION_NAME)),Long.parseLong(hashmap.get(TIME_TABLE_NAME)),currency,Float.parseFloat(hashmap.get(BEFORE_TABLE_NAME)),Float.parseFloat(hashmap.get(AFTER_TABLE_NAME)),hashmap.get(SOURCE_TABLE_NAME)));
         }
         return result;
     }
     private void deleteExcessiveData(String currency, int limit, TimeUnit timeUnit){
         long ms = timeUnit.toMillis(limit);
         long lim = System.currentTimeMillis() - ms;
-        sqliter.runQuery("DELETE FROM " + currency + " WHERE TIME < " + lim);
+        sqliter.runQuery("DELETE FROM " + currency + " WHERE " + TIME_TABLE_NAME + " < " + lim);
     }
 }

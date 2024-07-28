@@ -55,7 +55,7 @@ public class SaveInventoryHolder implements InventoryHolder {
     public void save(){
         File folder = new File(plugin.getDataFolder(),"/saves");
         if(!folder.exists()){
-            folder.mkdir();
+            folder.mkdirs();
         }
         Date date = new Date();
         String filename = (player.getName() + "_" + currency + "_" + DateFormat.getDateInstance().format(date) + "_" + DateFormat.getTimeInstance().format(date) + ".txt").replace(":",".");
@@ -63,7 +63,7 @@ public class SaveInventoryHolder implements InventoryHolder {
         if(!file.exists()){
             try {
                 file.createNewFile();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

@@ -30,6 +30,7 @@ public final class LogTransaction extends JavaPlugin {
         // Register commands
         getCommand("retrievetransaction").setExecutor(new RetrievePlayerTransactionCommand());
         getCommand("retrievetransaction").setTabCompleter(new RetrievePlayerTransactionCommand());
+
         // Register Handlers
         PluginManager manager = getServer().getPluginManager();
         manager.registerEvents(new CoinsEngineChangeBalanceEvent(),this);

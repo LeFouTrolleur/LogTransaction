@@ -35,21 +35,26 @@ public class RetrievePlayerTransactionCommand implements CommandExecutor, TabCom
             sendError(sender,"Seul un joueur peut exécuter cette commande");
             return false;
         }
+
         if(!player.hasPermission(permission)) return false;
+
         if(args.length >= 2){
             String playerName = args[0];
             String currency = args[1];
             OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
             UUID uuid = target.getUniqueId();
+
             if(CoinsEngineAPI.getCurrencyManager().getCurrencies().stream().map(Currency::getName).noneMatch(currency::equals) && !currency.equals(DatabaseQuery.MONEY)){
                 sendError(sender,"Cette devise n'existe pas");
                 return false;
             }
+
             DatabaseQuery database = LogTransaction.getDatabase();
             ArrayList<Transaction> transactions = database.retrieveData(uuid,currency);
             LogInventoryHolder logInventoryHolder = new LogInventoryHolder(LogTransaction.getInstance(),currency,transactions,target);
             player.openInventory(logInventoryHolder.getInventory());
             logInventoryHolder.loadInventory();
+
             return true;
         }
         return false;

@@ -59,40 +59,18 @@ public class LogInventoryHolder implements InventoryHolder {
     }
     void refresh(){
         int min = page * MAX_TRANSACTIONS_PER_PAGE;
-        int max = min + MAX_TRANSACTIONS_PER_PAGE;
-        List<Transaction> sortedTransactions = new ArrayList<>();
-        if(sortType == 0){
-            if(sorted_transactions.containsKey(sortType)) {
-                sortedTransactions = sorted_transactions.get(sortType);
-            } else {
-                sortedTransactions = Lists.reverse(getSortedTransactionsByDate(all_transactions));
-                sorted_transactions.put(sortType,sortedTransactions);
-            }
-        } else if(sortType == 1) {
-            if(sorted_transactions.containsKey(sortType)){
-                sortedTransactions = sorted_transactions.get(sortType);
-                } else {
-                    sortedTransactions = getSortedTransactionsByDate(all_transactions);
-                    sorted_transactions.put(sortType,sortedTransactions);
-                }
-        } else if(sortType == 2){
-            if(sorted_transactions.containsKey(sortType)){
-                sortedTransactions = sorted_transactions.get(sortType);
-            } else {
-                sortedTransactions = getSortedTransactionsByAmount(all_transactions);
-                sorted_transactions.put(sortType,sortedTransactions);
-            }
-        } else if(sortType == 3){
-            if(sorted_transactions.containsKey(sortType)){
-                sortedTransactions = sorted_transactions.get(sortType);
-            } else {
-                sortedTransactions = Lists.reverse(getSortedTransactionsByAmount(all_transactions));
-                sorted_transactions.put(sortType,sortedTransactions);
-            }
+        int max = Math.min(min + MAX_TRANSACTIONS_PER_PAGE, all_transactions.size());
+        List<Transaction> transactionsList = switch (sortType) {
+            case 0 -> sorted_transactions.getOrDefault(0,Lists.reverse(getSortedTransactionsByDate(all_transactions)));
+            case 1 -> sorted_transactions.getOrDefault(1,getSortedTransactionsByDate(all_transactions));
+            case 2 -> sorted_transactions.getOrDefault(2,getSortedTransactionsByAmount(all_transactions));
+            case 3 -> sorted_transactions.getOrDefault(3,Lists.reverse(getSortedTransactionsByAmount(all_transactions)));
+            default -> new ArrayList<>();
+        };
+        if(sorted_transactions.get(sortType) == null || sorted_transactions.get(sortType).isEmpty()){
+            sorted_transactions.put(sortType, transactionsList);
         }
-
-        int size = sortedTransactions.size();
-        this.showed_transactions = sortedTransactions.subList(min,Math.min(max,size));
+        this.showed_transactions = transactionsList.subList(min,max);
 
         if(all_transactions.isEmpty()){
             inv.setItem(31, ItemsLib.EMPTY_TRANSACTION);
@@ -105,14 +83,10 @@ public class LogInventoryHolder implements InventoryHolder {
                     inv.setItem(i+9, new ItemStack(Material.AIR));
                 }
             }
-            if(page > 0){
-                inv.setItem(48, ItemsLib.PREVIOUS_PAGE);
-            } else inv.setItem(48, new ItemStack(Material.AIR));
-            if((page+1)*MAX_TRANSACTIONS_PER_PAGE < all_transactions.size()){
-                inv.setItem(50, ItemsLib.NEXT_PAGE);
-            } else inv.setItem(50, new ItemStack(Material.AIR));
-            inv.setItem(6,getSortItemStack(sortType));
-            inv.setItem(49, getPageNumberItemStack(page+1));
+            inv.setItem(48, page > 0 ? ItemsLib.PREVIOUS_PAGE : new ItemStack(Material.AIR));
+            inv.setItem(50, (page + 1) * MAX_TRANSACTIONS_PER_PAGE < all_transactions.size() ? ItemsLib.NEXT_PAGE : new ItemStack(Material.AIR));
+            inv.setItem(6, getSortItemStack(sortType));
+            inv.setItem(49, getPageNumberItemStack(page + 1));
         }
 
     }
